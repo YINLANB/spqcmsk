@@ -1,0 +1,104 @@
+# 视频马赛克去除配置文件
+
+# 基础配置
+base:
+  # 输入视频路径
+  input_video: ""
+  # 输出视频路径
+  output_video: ""
+  # 马赛克区域标注文件路径（可选，支持 JSON 格式）
+  mask_file: ""
+
+# 模型配置
+model:
+  # 使用的模型类型: propainter, e2fgvi, sttn
+  name: "propainter"
+  # 模型检查点路径
+  checkpoint_dir: "./checkpoints"
+  # 设备: cuda, cpu
+  device: "cuda"
+  # 是否使用半精度推理（节省显存，推荐在显存小于 8GB 时使用）
+  use_fp16: true
+
+# 处理配置
+process:
+  # 视频帧率（保持原始帧率）
+  fps: 0
+  # 处理块大小（影响显存占用和处理速度）
+  # 越小越省显存但可能影响时序一致性
+  chunk_size: 10
+  # 每次处理的帧数（影响显存占用）
+  height: 0
+  width: 0
+  # 是否使用双向传播（效果更好但更慢）
+  bidirectional: true
+  # 时序传播的邻近帧数
+  neighbor_frames: 10
+  # 遮罩膨胀核大小（用于扩展马赛克区域边界）
+  dilate_kernel: 5
+
+# 马赛克检测配置（自动模式）
+detection:
+  # 是否启用自动马赛克检测
+  auto_detect: true
+  # 检测灵敏度 (0-1，越高越敏感)
+  sensitivity: 0.7
+  # 最小马赛克区域面积（像素）
+  min_area: 100
+  # 是否使用形态学操作优化遮罩
+  morphology: true
+  # 膨胀次数
+  dilate_iterations: 2
+  # 闭运算核大小
+  close_kernel: 5
+
+# 输出配置
+output:
+  # 视频编码格式
+  codec: "mp4v"
+  # 视频质量 (0-100)
+  quality: 95
+  # 是否保存中间帧
+  save_frames: false
+  # 中间帧保存目录
+  frames_dir: "./output_frames"
+  # 是否显示处理进度
+  show_progress: true
+  # 是否启用实时预览
+  preview: false
+  # 预览窗口缩放比例 (0.1-1.0)
+  preview_scale: 0.5
+
+# 断点续传配置
+resume:
+  # 是否启用断点续传
+  enabled: true
+
+# 人脸修复配置
+face_restore:
+  # 是否启用人脸修复
+  enabled: false
+  # 人脸修复模型: gfpgan, codeformer
+  model: "gfpgan"
+  # 超分辨率倍数
+  upscale: 1
+  # CodeFormer 保真度权重 (0-1)
+  weight: 0.5
+
+# 处理历史配置
+history:
+  # 是否启用历史记录
+  enabled: true
+  # 历史记录目录
+  history_dir: "./history"
+  # 最大记录数
+  max_records: 100
+
+# 性能配置
+performance:
+  # 多线程加载
+  num_workers: 4
+  # 是否使用 CUDA 加速
+  use_cuda: true
+  # 批处理大小（影响速度和显存）
+  batch_size: 1
